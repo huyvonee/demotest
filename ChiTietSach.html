@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HALM BOOK - Chi Tiết Sách</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                        nunito: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#8b5cf6',
+                        secondary: '#f43f5e',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --primary: #9b51e0;
+            --secondary: #ffde59;
+            --bg-color: #fdfdfd;
+            --card-bg: #ffffff;
+            --card-bg-alt: #f1f2f6;
+            --text-main: #1a1a1a;
+            --text-muted: #444444;
+            --border-color: #1a1a1a;
+            --btn-hover: #f1f2f6;
+            --input-bg: #ffffff;
+        }
+
+        .dark {
+            --primary: #a855f7;
+            --secondary: #e11d48;
+            --bg-color: #07070a;
+            --card-bg: #18181b;
+            --card-bg-alt: #27272a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #475569;
+            --btn-hover: #3f3f46;
+            --input-bg: #18181b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            font-family: 'Outfit', sans-serif;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        /* --- BẦU TRỜI SAO TRONG DARK MODE --- */
+        #starry-background {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 1; overflow: hidden; background: transparent;
+        }
+        .dark #starry-background { display: block !important; }
+        .star { position: absolute; background-color: #ffffff !important; border-radius: 50%; opacity: 0; }
+        @keyframes starTwinkle {
+            0% { opacity: 0.1; transform: scale(0.9); box-shadow: 0 0 1px 0 rgba(255,255,255,0.05); }
+            50% { opacity: 0.6; transform: scale(1.1); box-shadow: 0 0 4px 1px rgba(255,255,255,0.3); }
+            100% { opacity: 0.1; transform: scale(0.9); box-shadow: 0 0 1px 0 rgba(255,255,255,0.05); }
+        }
+
+        .header-transition {
+            transition: padding 0.4s ease-in-out, background-color 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+        }
+
+        #navbar .group:hover .nav-text,
+        #navbar .group:hover .icon-text,
+        #navbar .nav-text:hover,
+        #navbar button:hover .nav-text {
+            color: #ec4899 !important;
+        }
+
+        #navbar .nav-icon-wrapper {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            border-color: transparent !important;
+        }
+        
+        #navbar .nav-icon-wrapper:hover {
+            background-color: rgba(255, 255, 255, 0.2) !important;
+        }
+
+        #navbar .search-input:focus {
+            background-color: rgba(255, 255, 255, 0.15) !important;
+            border-color: #f472b6 !important;
+            box-shadow: 0 0 0 2px rgba(244, 114, 182, 0.2) !important;
+        }
+
+        /* --- Main Layout --- */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            flex: 1;
+            width: 100%;
+        }
+
+        .reviews-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-bottom: 40px;
+            transition: all 0.3s;
+        }
+
+        .review-input-box { display: flex; gap: 15px; margin-bottom: 25px; padding-bottom: 25px; border-bottom: 1px dashed var(--border-color); }
+        .review-avatar { flex-shrink: 0; width: 45px; height: 45px; border-radius: 50%; border: 1px solid var(--border-color); background: var(--secondary); display: flex; justify-content: center; align-items: center; font-size: 1.1rem; font-weight: bold; color: #1a1a1a; }
+        .review-input-content { flex: 1; }
+        .review-textarea { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 0.95rem; resize: vertical; min-height: 70px; margin-bottom: 10px; outline: none; transition: box-shadow 0.2s, background 0.3s; background: var(--input-bg); color: var(--text-main); }
+        .review-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2); }
+        .btn-submit-review { padding: 8px 20px; font-weight: 800; font-size: 0.95rem; background: var(--primary); color: #fff; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; }
+        .btn-submit-review:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .btn-submit-review:active { transform: translateY(0); box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1); }
+
+        .review-list { display: flex; flex-direction: column; gap: 15px; }
+        .review-item { display: flex; gap: 12px; }
+        .review-item-content { flex: 1; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.3s; }
+        .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .reviewer-name { font-weight: 800; font-size: 1.05rem; }
+        .review-date { font-size: 0.85rem; color: #7f8c8d; font-weight: 500; }
+        .review-stars { color: #f1c40f; font-size: 0.85rem; margin-bottom: 8px; }
+        .review-text { color: var(--text-muted); line-height: 1.5; font-size: 0.95rem; transition: color 0.3s; }
+
+        #btnScrollToTop {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            z-index: 999;
+            background: var(--secondary);
+            color: var(--text-main);
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            border: 3px solid var(--border-color);
+            box-shadow: 4px 4px 0px var(--border-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        #btnScrollToTop.show { opacity: 1; visibility: visible; }
+        #btnScrollToTop:hover { transform: translate(-3px, -3px); box-shadow: 7px 7px 0px var(--border-color); background: var(--primary); color: #fff; }
+        #btnScrollToTop:active { transform: translate(0, 0); box-shadow: 0px 0px 0px var(--border-color); }
+    </style>
+</head>
+<body class="antialiased flex flex-col min-h-screen relative">
+
+    <!-- BẦU TRỜI SAO TRONG DARK MODE -->
+    <div id="starry-background"></div>
+
+    <nav id="navbar" class="fixed top-0 w-full z-50 header-transition bg-[#000000] py-2 border-b border-white/10 shadow-[0_4px_15px_rgba(0,0,0,0.5)]">
+        <div class="container-fluid max-w-7xl mx-auto flex justify-between items-center gap-4 lg:gap-8 font-nunito px-4">
+            
+            <div class="flex items-center gap-4 lg:gap-6 shrink-0">
+                <a href="#" class="flex items-center gap-2 group">
+                    <img src="img/icon-removebg-preview.png" alt="Halm Book Logo" class="w-11 h-11 md:w-14 md:h-14 object-contain group-hover:rotate-[-8deg] group-hover:scale-110 transition-transform duration-300 origin-bottom-left" onerror="this.src='https://api.dicebear.com/7.x/shapes/svg?seed=Halm'">
+                    <span class="tracking-tight uppercase text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-rose-500 to-red-500 dark:from-[#60a5fa] dark:via-[#818cf8] dark:to-[#c084fc] group-hover:from-pink-400 group-hover:to-red-400 dark:group-hover:from-[#3b82f6] dark:group-hover:to-[#a855f7] transition-all font-nunito drop-shadow-sm">HALM BOOK</span>
+                </a>
+
+                <button class="hidden sm:flex items-center justify-center gap-1 text-white hover:text-pink-500 dark:hover:text-[#818cf8] transition-colors group ml-2">
+                    <!-- EDIT: Changed ph-bold to ph-light, and text-[34px] to text-[26px] for a thinner/smaller look -->
+                    <i class="ph-light ph-squares-four text-[26px] nav-text transition-colors"></i>
+                    <i class="ph-bold ph-caret-down text-[12px] nav-text transition-colors mt-1"></i>
+                </button>
+            </div>
+
+            <div class="flex-1 max-w-2xl hidden md:block">
+                <form class="relative flex items-center w-full mt-1">
+                    <input type="text" placeholder="Tìm kiếm sách, tác giả..." class="search-input w-full pl-5 pr-20 py-[10px] rounded-lg border border-white/20 bg-white/10 backdrop-blur-sm focus:outline-none focus:bg-white/20 focus:border-pink-400 dark:focus:border-[#818cf8] focus:ring-1 focus:ring-pink-400/50 dark:focus:ring-[#818cf8]/50 text-white placeholder-gray-300 transition-all shadow-sm font-semibold text-sm">
+                    <button type="submit" class="absolute right-0 top-0 bottom-0 px-6 bg-[#C92127] hover:bg-[#a61c20] dark:bg-gradient-to-r dark:from-[#60a5fa] dark:to-[#c084fc] dark:hover:from-[#3b82f6] dark:hover:to-[#a855f7] dark:border-none text-white rounded-r-lg transition-all flex items-center justify-center border border-[#C92127]">
+                        <!-- EDIT: Changed ph-bold to ph-light -->
+                        <i class="ph-light ph-magnifying-glass text-xl"></i>
+                    </button>
+                </form>
+            </div>
+
+            <div class="flex items-center gap-5 sm:gap-7 shrink-0">
+                <div class="cursor-pointer group flex flex-col items-center justify-center relative mt-1">
+                    <div class="relative flex justify-center">
+                        <!-- EDIT: Changed from ph to ph-light, text-[28px] to text-[24px] -->
+                        <i class="ph-light ph-bell text-[24px] text-white nav-text group-hover:text-pink-500 dark:group-hover:text-[#818cf8] transition-colors group-hover:-translate-y-0.5 transform duration-200"></i>
+                        <span class="absolute -top-1 -right-1.5 w-4 h-4 bg-orange-500 text-white font-bold text-[10px] rounded-full flex items-center justify-center shadow-sm">2</span>
+                    </div>
+                    <span class="text-[11px] font-semibold text-gray-300 mt-0.5 icon-text group-hover:text-pink-500 dark:group-hover:text-[#818cf8] transition-colors">Thông Báo</span>
+                </div>
+
+                <div class="cursor-pointer group flex flex-col items-center justify-center relative mt-1">
+                     <!-- EDIT: Changed from ph to ph-light, text-[28px] to text-[24px] -->
+                    <i class="ph-light ph-shopping-cart text-[24px] text-white nav-text group-hover:text-pink-500 dark:group-hover:text-[#818cf8] transition-colors group-hover:-translate-y-0.5 transform duration-200"></i>
+                    <span class="text-[11px] font-semibold text-gray-300 mt-0.5 icon-text group-hover:text-pink-500 dark:group-hover:text-[#818cf8] transition-colors">Giỏ Hàng</span>
+                </div>
+
+                <div class="cursor-pointer group flex flex-col items-center justify-center relative mt-1">
+                     <!-- EDIT: Changed from ph to ph-light, text-[28px] to text-[24px] -->
+                    <i class="ph-light ph-user text-[24px] text-white nav-text group-hover:text-pink-500 dark:group-hover:text-[#818cf8] transition-colors group-hover:-translate-y-0.5 transform duration-200"></i>
+                    <span class="text-[11px] font-semibold text-gray-300 mt-0.5 icon-text group-hover:text-pink-500 dark:group-hover:text-[#818cf8] transition-colors">Tài khoản</span>
+                </div>
+
+                <!-- Theme toggle -->
+                <div id="theme-toggle" class="cursor-pointer group flex flex-col items-center justify-center relative mt-1">
+                     <!-- EDIT: Added ph-light class for default state, size reduced to 24px -->
+                    <i id="theme-icon" class="ph-light ph-moon text-[24px] text-white nav-text group-hover:text-pink-500 dark:group-hover:text-[#818cf8] transition-colors group-hover:-translate-y-0.5 transform duration-200"></i>
+                    <span class="text-[11px] font-semibold text-gray-300 mt-0.5 icon-text group-hover:text-pink-500 dark:group-hover:text-[#818cf8] transition-colors">Giao diện</span>
+                </div>
+
+                <!-- CỜ VIỆT NAM -->
+                <button class="hidden sm:flex items-center justify-center px-2 py-1.5 border border-white/20 rounded-lg bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-colors h-[40px] mt-1 shadow-sm nav-icon-wrapper w-[45px]">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" class="w-full h-full rounded-[2px] object-cover">
+                        <rect fill="#da251d" width="900" height="600"/>
+                        <polygon fill="#ffff00" points="450,118.8 544.1,408.3 203.8,225.5 696.2,225.5 355.9,408.3"/>
+                    </svg>
+                </button>
+
+                <button class="md:hidden flex flex-col items-center justify-center group mt-1">
+                     <!-- EDIT: Changed from ph to ph-light, text-[28px] to text-[24px] -->
+                    <i class="ph-light ph-list text-[24px] text-white nav-text group-hover:text-pink-500 dark:group-hover:text-[#818cf8] transition-colors"></i>
+                    <span class="text-[11px] font-semibold text-gray-300 mt-0.5 icon-text group-hover:text-pink-500 dark:group-hover:text-[#818cf8] transition-colors">Menu</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENT WRAPPER -->
+    <div class="container relative z-10 flex-grow pt-[90px] pb-[60px] px-4 md:px-6">
+        
+        <!-- TIÊU ĐỀ BÌNH THƯỜNG -->
+        <h1 class="text-center text-[2.2rem] font-semibold text-gray-900 dark:text-white mb-10">Chi Tiết Sách</h1>
+        
+        <div class="flex flex-col gap-[40px]">
+            
+            <!-- HÀNG TRÊN: Ảnh Bìa & Box Thuê -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-12 w-full items-stretch">
+                
+                <!-- CỘT TRÁI: Ảnh Bìa -->
+                <div class="flex justify-center md:justify-end w-full h-full">
+                    <!-- Áp dụng absolute trên màn hình lớn để ảnh thu nhỏ ép theo đúng chiều cao của cột phải -->
+                    <div class="w-full max-w-[320px] aspect-[2/3] md:aspect-auto md:h-[450px] rounded-xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700 transition-transform duration-300 hover:-translate-y-1 relative mx-auto md:mx-0">
+                        <img src="https://cdn0.fahasa.com/media/catalog/product/c/o/co-hai-con-meo-ngoi-ben-cua-so-_tai-ban-2023_.jpg" 
+                             alt="Có Hai Con Mèo Ngồi Bên Cửa Sổ" 
+                             class="w-full h-full object-cover md:absolute md:inset-0"
+                             onerror="this.onerror=null;this.src='https://placehold.co/400x600/2ecc71/ffffff?text=Có+Hai+Con+Mèo';">
+                    </div>
+                </div>
+                
+                <!-- CỘT PHẢI: Khung Thuê Sách -->
+                <div class="flex justify-center md:justify-start w-full h-full">
+                    <div class="w-full max-w-[450px] h-full bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-700 rounded-[20px] p-7 lg:p-8 shadow-lg relative flex flex-col justify-between font-nunito transition-all duration-300 mx-auto md:mx-0">
+                        
+                        <!-- Nút ghim trên cùng -->
+                        <div class="absolute top-3 left-1/2 -translate-x-1/2 w-10 h-[5px] bg-gray-300 dark:bg-gray-600 rounded-full"></div>
+                        
+                        <div class="flex flex-col gap-6 mt-4">
+                            <!-- Ngày thuê -->
+                            <div class="flex justify-between items-center">
+                                <span class="text-[15px] font-bold text-gray-700 dark:text-gray-300">Ngày thuê:</span>
+                                <strong class="text-gray-900 dark:text-white text-[16px] font-black tracking-wide">12/09/2026</strong>
+                            </div>
+                            
+                            <!-- Thời gian -->
+                            <div class="flex justify-between items-center">
+                                <span class="text-[15px] font-bold text-gray-700 dark:text-gray-300">Thời gian:</span>
+                                <div class="relative">
+                                    <select class="pl-4 pr-10 py-1.5 text-[15px] font-bold border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm cursor-pointer outline-none hover:-translate-y-0.5 hover:shadow-md transition-all appearance-none">
+                                        <option>1 Tháng</option>
+                                        <option>3 Tháng</option>
+                                        <option>6 Tháng</option>
+                                    </select>
+                                    <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                                        <i class="fas fa-chevron-down text-gray-600 dark:text-gray-300 text-sm"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Voucher -->
+                            <div class="flex justify-between items-center">
+                                <span class="text-[15px] font-bold text-gray-700 dark:text-gray-300">Voucher:</span>
+                                <button class="w-[30px] h-[30px] rounded-full bg-[#ffde59] border border-gray-300 dark:border-gray-600 flex items-center justify-center shadow-sm cursor-pointer hover:-translate-y-0.5 hover:shadow-md transition-all group">
+                                    <i class="fas fa-plus text-[#1a1a1a] text-[13px] font-black group-hover:scale-110 transition-transform"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Dấu gạch đứt đoạn -->
+                        <div class="w-full h-[2px] my-6 bg-[length:16px_2px] bg-repeat-x bg-[linear-gradient(to_right,#e5e7eb_50%,transparent_50%)] dark:bg-[linear-gradient(to_right,#374151_50%,transparent_50%)]"></div>
+                        
+                        <!-- Thành tiền -->
+                        <div class="flex justify-between items-center mb-6">
+                            <span class="text-gray-900 dark:text-white text-[18px] font-black tracking-wide">Thành tiền:</span>
+                            <span class="text-[#e74c3c] flex items-center gap-2 text-[22px] font-black">
+                                20 <span class="text-[24px] drop-shadow-sm">🥔</span>
+                            </span>
+                        </div>
+                        
+                        <!-- Nút bấm -->
+                        <div class="flex gap-4">
+                            <button class="flex-1 py-2.5 text-[14px] font-black uppercase tracking-widest bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 rounded-[12px] shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all">
+                                Đọc Thử
+                            </button>
+                            <button class="flex-1 py-2.5 text-[14px] font-black uppercase tracking-widest bg-[#9333ea] dark:bg-[#a855f7] text-white rounded-[12px] shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all border border-transparent">
+                                Thuê Sách
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HÀNG DƯỚI: PHẦN THÔNG TIN & TÓM TẮT -->
+            <div class="flex flex-col items-center text-center mt-6 w-full bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-700 rounded-[20px] p-8 md:p-10 shadow-lg transition-all duration-300 mx-auto">
+                
+                <!-- Tên sách -->
+                <h2 class="text-3xl md:text-[2.2rem] font-black text-gray-900 dark:text-white mb-4 tracking-tight">
+                    Có Hai Con Mèo Ngồi Bên Cửa Sổ
+                </h2>
+
+                <!-- Đánh giá -->
+                <div class="flex items-center justify-center gap-2 mb-6">
+                    <div class="flex text-[#f1c40f] text-xl gap-1">
+                        <i class="fas fa-star" style="-webkit-text-stroke: 1.5px #1a1a1a;"></i>
+                        <i class="fas fa-star" style="-webkit-text-stroke: 1.5px #1a1a1a;"></i>
+                        <i class="fas fa-star" style="-webkit-text-stroke: 1.5px #1a1a1a;"></i>
+                        <i class="fas fa-star" style="-webkit-text-stroke: 1.5px #1a1a1a;"></i>
+                        <i class="fas fa-star" style="-webkit-text-stroke: 1.5px #1a1a1a;"></i>
+                    </div>
+                    <span class="text-gray-500 font-bold text-[15px] ml-2">(124 đánh giá)</span>
+                </div>
+
+                <!-- Meta info (Tác giả, NXB, Năm, Số trang) -->
+                <div class="flex flex-wrap justify-center gap-x-10 gap-y-3 mb-8 text-[16px]">
+                    <div><span class="text-gray-400 font-bold">Tác giả:</span> <span class="font-black text-gray-900 dark:text-white ml-1">Nguyễn Nhật Ánh</span></div>
+                    <div><span class="text-gray-400 font-bold">NXB:</span> <span class="font-black text-gray-900 dark:text-white ml-1">Nhà Xuất Bản Trẻ</span></div>
+                    <div><span class="text-gray-400 font-bold">Năm xuất bản:</span> <span class="font-black text-gray-900 dark:text-white ml-1">2012</span></div>
+                    <div><span class="text-gray-400 font-bold">Định dạng:</span> <span class="font-black text-gray-900 dark:text-white ml-1">Sách in</span></div>
+                </div>
+
+                <!-- Đường kẻ ngang -->
+                <div class="w-full h-[2px] bg-[#1a1a1a] dark:bg-gray-700 mb-8"></div>
+
+                <!-- Tiêu đề Tóm tắt -->
+                <h3 class="text-2xl font-black mb-6 text-gray-900 dark:text-white">Tóm Tắt Nội Dung</h3>
+                
+                <!-- Nội dung Tóm tắt -->
+                <p class="text-[16px] md:text-[17px] leading-[2] text-[#444444] dark:text-gray-300 text-justify max-w-4xl font-medium px-4 md:px-0">
+                    "Có hai con mèo ngồi bên cửa sổ" của Nguyễn Nhật Ánh tập trung sâu về cuộc sống của loài động vật. Bên cạnh đó là 
+                    tình bạn không phân biệt giai cấp, chủng tộc, mâu thuẫn... Tác phẩm tái hiện một cách sống động, hài hước mà cũng 
+                    rất đỗi sâu sắc những cung bậc cảm xúc, suy nghĩ của các bạn động vật đáng yêu. Tình yêu của một chú mèo gấu bị 
+                    bệnh dành cho cô mèo tam thể xinh đẹp, tình bạn kỳ lạ giữa mèo và chuột... mang đến nhiều bài học nhân văn sâu sắc.
+                </p>
+            </div>
+
+            <!-- NHẬN XÉT -->
+            <div class="reviews-container mt-4">
+                <h3 class="text-2xl font-black mb-6 text-gray-900 dark:text-white">Nhận Xét Độc Giả</h3>
+                
+                <!-- Ô nhập nhận xét -->
+                <div class="review-input-box">
+                    <div class="review-avatar">Bạn</div>
+                    <div class="review-input-content">
+                        <textarea class="review-textarea" placeholder="Chia sẻ cảm nhận của bạn về cuốn sách này..."></textarea>
+                        <button class="btn-submit-review">Gửi Nhận Xét</button>
+                    </div>
+                </div>
+
+                <!-- Danh sách nhận xét -->
+                <div class="review-list">
+                    <div class="review-item">
+                        <div class="review-avatar" style="background: #a29bfe;">T</div>
+                        <div class="review-item-content">
+                            <div class="review-header">
+                                <span class="reviewer-name text-gray-900 dark:text-white">Trần Văn A</span>
+                                <span class="review-date">10/09/2026</span>
+                            </div>
+                            <div class="review-stars">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <div class="review-text">
+                                Sách rất hay, cốt truyện nhẹ nhàng nhưng mang lại nhiều bài học sâu sắc. Giọng văn của bác Ánh vẫn tuyệt vời như ngày nào. Tình bạn của Mèo Gấu và Tí Hon thật sự rất đẹp và cảm động.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="review-item">
+                        <div class="review-avatar" style="background: #fab1a0;">H</div>
+                        <div class="review-item-content">
+                            <div class="review-header">
+                                <span class="reviewer-name text-gray-900 dark:text-white">Nguyễn Thị H</span>
+                                <span class="review-date">05/09/2026</span>
+                            </div>
+                            <div class="review-stars">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                            <div class="review-text">
+                                Thiết kế bìa đẹp, nội dung dễ đọc. Đọc xong thấy yêu động vật hơn hẳn. Tuy nhiên phần cuối hơi buồn một chút, thương cho chàng Mèo Gấu chung tình.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-white dark:bg-[#0b0d10]/60 dark:backdrop-blur-md text-gray-800 dark:text-gray-300 py-6 border-t-[3px] border-[#333333] dark:border-gray-800/50 transition-colors relative z-10 shadow-[0_-4px_0_rgba(51,51,51,0.1)] dark:shadow-none">
+        <div class="container-fluid mx-auto px-4 max-w-7xl">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                
+                <div class="space-y-4">
+                    <div class="inline-block mb-1">
+                        <h2 class="text-3xl md:text-4xl font-black text-[#ffcc00] dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-[#60a5fa] dark:to-[#a855f7] uppercase whitespace-nowrap" style="-webkit-text-stroke: 1.5px #333333;">
+                            HALM BOOK
+                        </h2>
+                    </div>
+                    <br>
+                    <p class="text-sm font-bold text-gray-700 dark:text-white bg-[#e0f2fe] dark:bg-gradient-to-r dark:from-[#60a5fa] dark:to-[#a855f7] inline-block px-2 py-1 rounded-md border-2 border-[#333333] dark:border-transparent transition-colors">Nền tảng Đọc Sách Online</p>
+                    
+                    <div class="flex items-center space-x-3 text-sm font-semibold mt-4">
+                        <div class="bg-white dark:bg-gray-800 border-2 border-[#333333] dark:border-gray-600 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+                            <i class="fas fa-phone-alt text-[#333333] dark:text-gray-300"></i>
+                        </div>
+                        <span>0909.090.909</span>
+                    </div>
+                    
+                    <div class="flex items-center space-x-3 text-sm font-semibold break-all">
+                        <div class="bg-white dark:bg-gray-800 border-2 border-[#333333] dark:border-gray-600 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+                            <i class="fas fa-envelope text-[#333333] dark:text-gray-300"></i>
+                        </div>
+                        <a href="mailto:HalmBook@gmail.com" class="hover:text-blue-600 dark:hover:text-[#60a5fa] transition-colors">HalmBook@gmail.com</a>
+                    </div>
+                    
+                    <div class="flex items-center space-x-3 text-sm font-semibold break-all">
+                        <div class="bg-white dark:bg-gray-800 border-2 border-[#333333] dark:border-gray-600 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+                            <i class="fas fa-map-marker-alt text-[#333333] dark:text-gray-300"></i>
+                        </div>
+                        <span>03-Quang trung, TP Đà nẵng</span>
+                    </div>
+
+                    <div class="mt-5 flex flex-col gap-2">
+                        <div class="relative inline-block p-1 w-max">
+                            <div class="absolute top-0 left-0 w-6 h-6 border-t-[5px] border-l-[5px] border-teal-500 dark:border-[#60a5fa] rounded-tl-sm transition-colors"></div>
+                            <div class="absolute top-0 right-0 w-6 h-6 border-t-[5px] border-r-[5px] border-teal-500 dark:border-[#60a5fa] rounded-tr-sm transition-colors"></div>
+                            <div class="absolute bottom-0 left-0 w-6 h-6 border-b-[5px] border-l-[5px] border-teal-500 dark:border-[#60a5fa] rounded-bl-sm transition-colors"></div>
+                            <div class="absolute bottom-0 right-0 w-6 h-6 border-b-[5px] border-r-[5px] border-teal-500 dark:border-[#60a5fa] rounded-br-sm transition-colors"></div>
+                            
+                            <div class="bg-white dark:bg-gray-800 p-2 transition-colors">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=HALMBookApp" alt="Mã QR tải ứng dụng" class="w-20 h-20 md:w-24 md:h-24 object-contain">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:pl-8">
+                    <h3 class="text-base font-black text-[#333333] dark:text-white mb-3 uppercase tracking-wider bg-[#fef08a] dark:bg-gradient-to-r dark:from-[#60a5fa] dark:to-[#a855f7] inline-block px-2 py-1 rounded-md border-2 border-[#333333] dark:border-transparent transition-colors">Thông tin</h3>
+                    <ul class="space-y-1.5 text-sm font-semibold">
+                        <li><a href="#" class="text-gray-700 dark:text-gray-400 hover:text-black dark:hover:text-white hover:underline decoration-2 underline-offset-4 transition-all flex items-center gap-2"><i class="fas fa-caret-right text-[#4ade80] dark:text-[#a855f7]"></i> Giới thiệu</a></li>
+                        <li><a href="#" class="text-gray-700 dark:text-gray-400 hover:text-black dark:hover:text-white hover:underline decoration-2 underline-offset-4 transition-all flex items-center gap-2"><i class="fas fa-caret-right text-[#4ade80] dark:text-[#a855f7]"></i> Liên hệ</a></li>
+                        <li><a href="#" class="text-gray-700 dark:text-gray-400 hover:text-black dark:hover:text-white hover:underline decoration-2 underline-offset-4 transition-all flex items-center gap-2"><i class="fas fa-caret-right text-[#4ade80] dark:text-[#a855f7]"></i> Giấy phép kinh doanh</a></li>
+                        <li><a href="#" class="text-gray-700 dark:text-gray-400 hover:text-black dark:hover:text-white hover:underline decoration-2 underline-offset-4 transition-all flex items-center gap-2"><i class="fas fa-caret-right text-[#4ade80] dark:text-[#a855f7]"></i> Chính sách bảo mật</a></li>
+                        <li><a href="#" class="text-gray-700 dark:text-gray-400 hover:text-black dark:hover:text-white hover:underline decoration-2 underline-offset-4 transition-all flex items-center gap-2"><i class="fas fa-caret-right text-[#4ade80] dark:text-[#a855f7]"></i> Điều khoản</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-base font-black text-[#333333] dark:text-white mb-3 uppercase tracking-wider bg-[#fef08a] dark:bg-gradient-to-r dark:from-[#60a5fa] dark:to-[#a855f7] inline-block px-2 py-1 rounded-md border-2 border-[#333333] dark:border-transparent transition-colors">Hỗ trợ Khách Hàng</h3>
+                    <ul class="space-y-1.5 text-sm font-semibold">
+                        <li><a href="#" class="text-gray-700 dark:text-gray-400 hover:text-black dark:hover:text-white hover:underline decoration-2 underline-offset-4 transition-all flex items-center gap-2"><i class="fas fa-caret-right text-[#60a5fa] dark:text-[#a855f7]"></i> Chính sách thanh toán</a></li>
+                        <li><a href="#" class="text-gray-700 dark:text-gray-400 hover:text-black dark:hover:text-white hover:underline decoration-2 underline-offset-4 transition-all flex items-center gap-2"><i class="fas fa-caret-right text-[#60a5fa] dark:text-[#a855f7]"></i> Chính sách đổi trả/hoàn tiền</a></li>
+                        <li><a href="#" class="text-gray-700 dark:text-gray-400 hover:text-black dark:hover:text-white hover:underline decoration-2 underline-offset-4 transition-all flex items-center gap-2"><i class="fas fa-caret-right text-[#60a5fa] dark:text-[#a855f7]"></i> Giải quyết khiếu nại</a></li>
+                        <li><a href="#" class="text-gray-700 dark:text-gray-400 hover:text-black dark:hover:text-white hover:underline decoration-2 underline-offset-4 transition-all flex items-center gap-2"><i class="fas fa-caret-right text-[#60a5fa] dark:text-[#a855f7]"></i> Cam kết dịch vụ</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-base font-black text-[#333333] dark:text-white mb-3 uppercase tracking-wider bg-[#fef08a] dark:bg-gradient-to-r dark:from-[#60a5fa] dark:to-[#a855f7] inline-block px-2 py-1 rounded-md border-2 border-[#333333] dark:border-transparent transition-colors">Tin tức</h3>
+                    <ul class="space-y-1.5 mb-5 text-sm font-semibold">
+                        <li><a href="#" class="text-gray-700 dark:text-gray-400 hover:text-black dark:hover:text-white hover:underline decoration-2 underline-offset-4 transition-all flex items-center gap-2"><i class="fas fa-caret-right text-[#f87171] dark:text-[#a855f7]"></i> Tin dịch vụ</a></li>
+                        <li><a href="#" class="text-gray-700 dark:text-gray-400 hover:text-black dark:hover:text-white hover:underline decoration-2 underline-offset-4 transition-all flex items-center gap-2"><i class="fas fa-caret-right text-[#f87171] dark:text-[#a855f7]"></i> Review sách</a></li>
+                        <li><a href="#" class="text-gray-700 dark:text-gray-400 hover:text-black dark:hover:text-white hover:underline decoration-2 underline-offset-4 transition-all flex items-center gap-2"><i class="fas fa-caret-right text-[#f87171] dark:text-[#a855f7]"></i> Lịch phát hành</a></li>
+                    </ul>
+                    
+                    <div class="inline-flex items-center gap-4 bg-[#f8fafc] dark:bg-gray-800 p-3 mb-6 group hover:bg-[#e0f2fe] dark:hover:bg-gray-700 transition-colors cursor-pointer w-full max-w-[280px] border-2 border-[#333333] dark:border-gray-600 rounded-lg">
+                        <div class="bg-[#ffcc00] dark:bg-gradient-to-r dark:from-[#60a5fa] dark:to-[#a855f7] w-10 h-10 rounded-full border-[3px] border-[#333333] dark:border-transparent flex items-center justify-center flex-shrink-0 group-hover:-translate-y-1 group-hover:shadow-[0_4px_0_#333333] dark:group-hover:shadow-[0_4px_0_#60a5fa] transition-all">
+                            <i class="fas fa-phone-volume text-lg text-[#333333] dark:text-white animate-pulse"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest leading-none mb-1.5">Hotline hỗ trợ 24/7</h3>
+                            <p class="text-xl font-black text-[#333333] dark:text-white leading-none tracking-tight">0909.090.909</p>
+                        </div>
+                    </div>
+
+                    <div class="flex space-x-3">
+                        <a href="#" class="w-8 h-8 bg-white dark:bg-gray-800 rounded-md flex items-center justify-center text-[#1877f2] dark:text-gray-300 text-base border-2 border-[#333333] dark:border-gray-600 hover:bg-gray-50 dark:hover:text-white dark:hover:border-[#60a5fa] transition-colors" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="w-8 h-8 bg-white dark:bg-gray-800 rounded-md flex items-center justify-center text-[#e1306c] dark:text-gray-300 text-base border-2 border-[#333333] dark:border-gray-600 hover:bg-gray-50 dark:hover:text-white dark:hover:border-[#a855f7] transition-colors" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="w-8 h-8 bg-white dark:bg-gray-800 rounded-md flex items-center justify-center text-[#ff0000] dark:text-gray-300 text-base border-2 border-[#333333] dark:border-gray-600 hover:bg-gray-50 dark:hover:text-white dark:hover:border-[#f43f5e] transition-colors" aria-label="Youtube"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="w-8 h-8 bg-white dark:bg-gray-800 rounded-md flex items-center justify-center text-[#1da1f2] dark:text-gray-300 text-base border-2 border-[#333333] dark:border-gray-600 hover:bg-gray-50 dark:hover:text-white dark:hover:border-[#60a5fa] transition-colors" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-100 dark:border-gray-800 pt-4 mt-4 flex flex-col md:flex-row justify-between items-center transition-colors">
+                <p class="text-gray-400 text-sm">© 2026 HALM BOOK. Tất cả bản quyền được bảo lưu.</p>
+                <div class="flex items-center gap-1 text-gray-400 text-sm mt-4 md:mt-0">
+                    Phát triển với <i class="ph-fill ph-heart text-secondary dark:text-rose-500 animate-pulse mx-1"></i> dành cho người yêu sách
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Nút cuộn lên đầu trang -->
+    <button id="btnScrollToTop" title="Lên đầu trang">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // 1. TẠO SAO LẤP LÁNH CHO DARK MODE
+        const starryBg = document.getElementById('starry-background');
+        function createStars() {
+            if (!starryBg) return;
+            starryBg.innerHTML = ''; 
+            for (let i = 0; i < 150; i++) {
+                let star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.floor(Math.random() * window.innerWidth) + 'px';
+                star.style.top = Math.floor(Math.random() * window.innerHeight) + 'px';
+                let size = Math.random() * 1.5 + 0.8;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                let duration = Math.random() * 4 + 3;
+                let delay = Math.random() * 5;
+                star.style.animation = `starTwinkle ${duration}s ease-in-out ${delay}s infinite`;
+                starryBg.appendChild(star);
+            }
+        }
+        setTimeout(createStars, 100);
+        window.addEventListener('resize', () => {
+            if(document.documentElement.classList.contains('dark')) createStars();
+        });
+
+        // 2. LOGIC DARK MODE
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        
+        function updateFooterLogoStroke(isDark) {
+            const footerLogo = document.querySelector('footer h2');
+            if(footerLogo) footerLogo.style.webkitTextStroke = isDark ? '0px transparent' : '1.5px #333333';
+        }
+        
+        // Kiểm tra lịch sử dark mode
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            if(themeIcon) {
+                themeIcon.classList.remove('ph-moon');
+                themeIcon.classList.add('ph-sun');
+            }
+            updateFooterLogoStroke(true);
+        } else {
+            document.documentElement.classList.remove('dark');
+            if(themeIcon) {
+                themeIcon.classList.remove('ph-sun');
+                themeIcon.classList.add('ph-moon');
+            }
+            updateFooterLogoStroke(false);
+        }
+
+        if(themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', function() {
+                document.documentElement.classList.toggle('dark');
+                if (document.documentElement.classList.contains('dark')) {
+                    localStorage.setItem('color-theme', 'dark');
+                    themeIcon.classList.remove('ph-moon');
+                    themeIcon.classList.add('ph-sun');
+                    updateFooterLogoStroke(true);
+                    createStars();
+                } else {
+                    localStorage.setItem('color-theme', 'light');
+                    themeIcon.classList.remove('ph-sun');
+                    themeIcon.classList.add('ph-moon');
+                    updateFooterLogoStroke(false);
+                }
+            });
+        }
+
+        // Logic cho nút Scroll to Top
+        const btnScrollToTop = document.getElementById("btnScrollToTop");
+
+        window.addEventListener("scroll", () => {
+            if (window.pageYOffset > 300) {
+                btnScrollToTop.classList.add("show");
+            } else {
+                btnScrollToTop.classList.remove("show");
+            }
+        });
+
+        btnScrollToTop.addEventListener("click", () => {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        });
+    </script>
+</body>
+</html>
